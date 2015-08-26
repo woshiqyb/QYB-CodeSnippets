@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDECodeSnippetCompletionPrefix</key>
+	<string>qyb_vc</string>
+	<key>IDECodeSnippetCompletionScopes</key>
+	<array>
+		<string>ClassImplementation</string>
+	</array>
+	<key>IDECodeSnippetContents</key>
+	<string>- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    
+    currentPage = 1;
+    
+    [&lt;#TableViewName#&gt; addLegendFooterWithRefreshingBlock:^{
+        [self request&lt;#Something#&gt;OnGlobalQueue];
+    }];
+    
+    [&lt;#TableViewName#&gt; addLegendHeaderWithRefreshingBlock:^{
+        currentPage = 1;
+        [self request&lt;#Something#&gt;OnGlobalQueue];
+    }];
+    
+    [self request&lt;#Something#&gt;OnGlobalQueue];
+}
+
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+#pragma mark - Initialization
+
+#pragma mark - UITableView Datasource
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return 10;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    static NSString *cellIdentifier = @"Cell";
+    
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    
+    if(!cell) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+    }
+    
+    cell.textLabel.text = [NSString stringWithFormat:@"Cell %d", indexPath.row];
+    
+    return cell;
+}
+
+#pragma mark - UITableView Delegate methods
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+}
+
+#pragma mark - Reload Table
+- (void)reload&lt;#TableViewName#&gt;OnMainQueueAtIndexPaths:(NSArray *)indexPaths{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (indexPaths &amp;&amp; indexPaths.count &gt; 0){
+            [&lt;#TableViewName#&gt; reloadRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
+        }else{
+            [&lt;#TableViewName#&gt; reloadData];
+        }
+        
+    });
+}
+
+
+- (void)reload&lt;#TableViewName#&gt;DataOnMainQueueWithNoMoreData:(BOOL)noMoreData{
+    dispatch_async(Main_Queue, ^{
+        [_scripturesListView.footer endRefreshing];
+        [_scripturesListView.header endRefreshing];
+        if (noMoreData) {
+            [_scripturesListView.footer noticeNoMoreData];
+        }else{
+            [_scripturesListView.footer resetNoMoreData];
+        }
+        [_scripturesListView reload&lt;#TableViewName#&gt;OnMainQueueAtIndexPaths:nil];
+    });
+}
+#pragma mark - Button Action
+
+
+#pragma mark - Network Request
+- (void)request&lt;#Something#&gt;OnGlobalQueue{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSMutableDictionary *params = [NSMutableDictionary dictionary];
+        [params setValue:@"" forKey:@"operate"];
+        [params setValue:@"" forKey:@"request_content"];
+        [params setValue:@(currentPage) forKey:@"current_page_num"];
+        [params setValue:@"20" forKey:@"page_size"];
+        [params setValue:@"" forKey:@"usercode"];
+        
+        [VICBaseService restApi:&lt;#Api Path#&gt; parameters:params success:^(NSDictionary *responseDic) {
+            NSArray *modelsTempArray = [&lt;#Model Class#&gt; parseObjectFromEasyArray:[responseDic valueForKeyPath:@"resultData.items"]];
+            
+            if (currentPage == 1) {
+                &lt;#Model Instance Array#&gt; = modelsTempArray;
+            }else{
+                [&lt;#Model Instance Array#&gt; addObjectsFromArray:modelsTempArray];
+            }
+            
+            int total = [[responseDic valueForKeyPath:@"resultData.total"] intValue];
+            
+            BOOL noMoreData = NO;
+            if ([&lt;#Model Instance Array#&gt; count] == total) {
+                noMoreData = YES;
+            }
+            
+            [self reload&lt;#TableViewName#&gt;DataOnMainQueueWithNoMoreData:noMoreData];
+        } error:^(NSError *error) {
+            [self reload&lt;#TableViewName#&gt;DataOnMainQueueWithNoMoreData:NO];
+        }];
+    });
+}</string>
+	<key>IDECodeSnippetIdentifier</key>
+	<string>B7EB8319-D4B5-4F14-B087-88009B7EC06D</string>
+	<key>IDECodeSnippetLanguage</key>
+	<string>Xcode.SourceCodeLanguage.Objective-C</string>
+	<key>IDECodeSnippetTitle</key>
+	<string>Common VC Of Pagable Table</string>
+	<key>IDECodeSnippetUserSnippet</key>
+	<true/>
+	<key>IDECodeSnippetVersion</key>
+	<integer>2</integer>
+</dict>
+</plist>

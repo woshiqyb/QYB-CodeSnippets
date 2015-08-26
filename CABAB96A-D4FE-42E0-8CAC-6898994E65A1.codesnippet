@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDECodeSnippetCompletionPrefix</key>
+	<string>qyb_MJRefresh</string>
+	<key>IDECodeSnippetCompletionScopes</key>
+	<array>
+		<string>CodeBlock</string>
+	</array>
+	<key>IDECodeSnippetContents</key>
+	<string>
+    currentPage = 1;
+    
+    [_chaoJingTableView addLegendFooterWithRefreshingBlock:^{
+        [self requestChaoJingListDataOnGlobalQueue];
+    }];
+    
+    [_chaoJingTableView addLegendHeaderWithRefreshingBlock:^{
+        currentPage = 1;
+        [self requestChaoJingListDataOnGlobalQueue];
+    }];
+    
+    [self requestChaoJingListDataOnGlobalQueue];</string>
+	<key>IDECodeSnippetIdentifier</key>
+	<string>CABAB96A-D4FE-42E0-8CAC-6898994E65A1</string>
+	<key>IDECodeSnippetLanguage</key>
+	<string>Xcode.SourceCodeLanguage.Objective-C</string>
+	<key>IDECodeSnippetSummary</key>
+	<string>Header and footer with refresh</string>
+	<key>IDECodeSnippetTitle</key>
+	<string>MJRefresh</string>
+	<key>IDECodeSnippetUserSnippet</key>
+	<true/>
+	<key>IDECodeSnippetVersion</key>
+	<integer>2</integer>
+</dict>
+</plist>
